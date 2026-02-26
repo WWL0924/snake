@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+<defs>
+<radialGradient id="bgA" cx="50%" cy="40%" r="70%">
+<stop offset="0%" stop-color="#1b103a"/>
+<stop offset="50%" stop-color="#120a2b"/>
+<stop offset="100%" stop-color="#0a0820"/>
+</radialGradient>
+<linearGradient id="strokeA" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" stop-color="#8a2be2"/>
+<stop offset="100%" stop-color="#00bfff"/>
+</linearGradient>
+<filter id="glowA">
+<feGaussianBlur stdDeviation="6" result="blur"/>
+<feMerge>
+<feMergeNode in="blur"/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
+<radialGradient id="appleA" cx="50%" cy="40%" r="60%">
+<stop offset="0%" stop-color="#ff7a7a"/>
+<stop offset="80%" stop-color="#ff2b2b"/>
+<stop offset="100%" stop-color="#b10000"/>
+</radialGradient>
+</defs>
+<rect x="0" y="0" width="1200" height="800" fill="url(#bgA)"/>
+<text x="600" y="120" fill="#d7b3ff" font-size="54" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" text-anchor="middle" filter="url(#glowA)">贪吃蛇 · 赛博实验室</text>
+<rect x="300" y="180" width="600" height="600" rx="18" fill="#0c0a1a" opacity="0.7"/>
+<rect x="300" y="180" width="600" height="600" rx="18" fill="none" stroke="url(#strokeA)" stroke-width="6" filter="url(#glowA)"/>
+<g opacity="0.15">
+<rect x="300" y="180" width="600" height="600" fill="none" stroke="#9a6cff" stroke-width="1"/>
+<g stroke="#9a6cff" stroke-width="0.8">
+<path d="M360 180 V780"/><path d="M420 180 V780"/><path d="M480 180 V780"/>
+<path d="M540 180 V780"/><path d="M600 180 V780"/><path d="M660 180 V780"/>
+<path d="M720 180 V780"/><path d="M780 180 V780"/><path d="M840 180 V780"/>
+<path d="M300 240 H900"/><path d="M300 300 H900"/><path d="M300 360 H900"/>
+<path d="M300 420 H900"/><path d="M300 480 H900"/><path d="M300 540 H900"/>
+<path d="M300 600 H900"/><path d="M300 660 H900"/><path d="M300 720 H900"/>
+</g>
+</g>
+<g filter="url(#glowA)">
+<g fill="#ff64d6" opacity="0.95">
+<rect x="570" y="520" width="28" height="28" rx="6"/>
+<rect x="570" y="488" width="28" height="28" rx="6"/>
+<rect x="570" y="456" width="28" height="28" rx="6"/>
+<rect x="570" y="424" width="28" height="28" rx="6"/>
+<rect x="570" y="392" width="28" height="28" rx="6"/>
+<rect x="570" y="360" width="28" height="28" rx="6"/>
+<rect x="602" y="360" width="28" height="28" rx="6"/>
+<rect x="634" y="360" width="28" height="28" rx="6"/>
+<rect x="666" y="360" width="28" height="28" rx="6"/>
+<rect x="698" y="360" width="28" height="28" rx="6"/>
+<rect x="730" y="360" width="28" height="28" rx="6"/>
+<rect x="762" y="360" width="28" height="28" rx="6" stroke="#ffd0f7" stroke-width="2"/>
+</g>
+<circle cx="820" cy="300" r="14" fill="url(#appleA)" stroke="#ff2b2b" stroke-width="2"/>
+</g>
+<rect x="360" y="720" width="480" height="60" rx="12" fill="#ffffff" opacity="0.06"/>
+<rect x="360" y="720" width="480" height="60" rx="12" fill="none" stroke="#ff2bd6" stroke-width="2" filter="url(#glowA)"/>
+<text x="600" y="760" fill="#ff87e7" font-size="24" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" text-anchor="middle">你死了 · 长度 9</text>
+</svg>
