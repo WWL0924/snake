@@ -10,6 +10,10 @@
 <body>
   <div class="area"></div>
   <div class="death"></div>
+  <div class="controls">
+    <button class="btn btn--pause">暂停</button>
+    <button class="btn btn--restart">重开</button>
+  </div>
 
 
 
@@ -20,31 +24,126 @@
       padding: 0;
     }
 
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 40%, #1b103a 0%, #120a2b 50%, #0a0820 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
     .area {
       /* 如果要改像素块记得更改区域大小 */
-      width: 1000px;
-      height: 1000px;
+      width: 800px;
+      height: 800px;
       display: grid;
-      grid-template-columns: repeat(100, 10px);
-      grid-auto-rows: 10px;
+      grid-template-columns: repeat(50, 16px);
+      grid-auto-rows: 16px;
       gap: 0;
+      margin-top: 100px;
+      border-radius: 18px;
+      background-color: rgba(12, 10, 26, 0.7);
+      background-image:
+        linear-gradient(to right, rgba(154, 108, 255, 0.15) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(154, 108, 255, 0.12) 1px, transparent 1px);
+      background-size: 16px 16px;
+      background-position: 0 0;
+      border: 6px solid transparent;
+      border-image: linear-gradient(90deg, #8a2be2, #00bfff) 1;
+      box-shadow:
+        0 0 24px rgba(138, 43, 226, 0.6),
+        0 0 36px rgba(0, 191, 255, 0.5);
     }
 
     .death {
       font-size: 20px;
+      width: 480px;
+      height: 60px;
+      margin: 50px 0;
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0.06);
+      border: 2px solid transparent;
+      border-image: linear-gradient(90deg, #8a2be2, #ff2bd6) 1;
+      box-shadow:
+        0 0 12px rgba(255, 43, 214, 0.6),
+        0 0 20px rgba(255, 135, 231, 0.4);
+      color: #ff87e7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-shadow: 0 0 6px rgba(255, 135, 231, 0.6);
+      font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    }
+
+    .cell {
+      width: 16px;
+      height: 16px;
+      background-color: rgba(135, 206, 235, 0.12);
+    }
+
+    .cell--snake {
+      background: linear-gradient(180deg, #ff87e7, #ff2bd6);
+      border-radius: 6px;
+      box-shadow:
+        0 0 8px rgba(255, 43, 214, 0.7),
+        0 0 14px rgba(255, 135, 231, 0.5);
+    }
+
+    .cell--apple {
+      background: radial-gradient(circle at 50% 40%, #ff7a7a 0%, #ff2b2b 80%, #b10000 100%);
+      border-radius: 50%;
+      box-shadow:
+        0 0 6px rgba(255, 43, 43, 0.7),
+        0 0 12px rgba(255, 122, 122, 0.5);
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin: 12px 0 0;
+      width: 480px;
+    }
+
+    .btn {
+      padding: 0 18px;
+      height: 60px;
+      border-radius: 12px;
+      color: #d7b3ff;
+      background-color: rgba(12, 10, 26, 0.6);
+      border: 2px solid transparent;
+      border-image: linear-gradient(90deg, #8a2be2, #00bfff) 1;
+      box-shadow:
+        0 0 10px rgba(138, 43, 226, 0.5),
+        0 0 16px rgba(0, 191, 255, 0.4);
+      font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex: 1;
+    }
+
+    .btn:hover {
+      box-shadow:
+        0 0 14px rgba(138, 43, 226, 0.7),
+        0 0 20px rgba(0, 191, 255, 0.6);
+      color: #ff87e7;
     }
   </style>
   <script>
-    //获取元素
     const area = document.querySelector('.area')
     const death = document.querySelector('.death')
+    const btnPause = document.querySelector('.btn--pause')
+    const btnRestart = document.querySelector('.btn--restart')
 
     // 数据流
     //原始坐标位置->(位移)->新的数据 渲染ui->（位移）->新的数据 获取ui
 
 
     //蛇 移动数组
-    const snake = [[51, 50], [50, 50], [49, 50], [48, 50], [47, 50], [46, 50], [45, 50], [44, 50], [43, 50]]  //初始长度为9
+    const snake = Array.from({ length: 10 }, (_, i) => [26 - i, 25])
 
     //判断arr里面有没有[x,y]
     function decide(arr, x, y) {
@@ -58,36 +157,35 @@
 
     //每20s生成随机坐标
     //开局就有随机坐标的果实
-    let apple = [Math.floor(Math.random() * 100),
-    Math.floor(Math.random() * 100)]
-    console.log('果实坐标', apple);
-
-    const reward = setInterval(() => {
-      //生成随机的奖励坐标
-      //生成之前先清空坐标
-      apple = []
-      apple.push(Math.floor(Math.random() * 100))
-      apple.push(Math.floor(Math.random() * 100))
-      render()
-    }, 20000)
+    let apple = [Math.floor(Math.random() * 50), Math.floor(Math.random() * 50)]
+    let reward
+    function startReward() {
+      reward = setInterval(() => {
+        apple = []
+        apple.push(Math.floor(Math.random() * 50))
+        apple.push(Math.floor(Math.random() * 50))
+        render()
+      }, 20000)
+    }
+    startReward()
 
     //渲染蛇 背景 和果实
     function render() {
       //区域用像素点
       let block = ''
-      for (let x = 0; x < 100; x++) {
-        for (let y = 0; y < 100; y++) {
+      for (let x = 0; x < 50; x++) {
+        for (let y = 0; y < 50; y++) {
           //渲染蛇
           if (decide(snake, x, y)) {
-            block += '<div style="width: 10px;height: 10px; background-color:pink;"></div>'
+            block += '<div class="cell cell--snake"></div>'
           }
           //渲染红色apple
           else if (x === apple[0] && y === apple[1]) {
-            block += '<div style="width: 10px;height: 10px; background-color:red;"></div>'
+            block += '<div class="cell cell--apple"></div>'
           }
           //渲染背景
           else {
-            block += '<div style="width: 10px;height: 10px; background-color:skyblue;"></div>'
+            block += '<div class="cell"></div>'
           }
         }
       }
@@ -95,6 +193,7 @@
     }
     //开局就要渲染
     render()
+    death.innerHTML = `当前长度：${snake.length}`
 
 
     //默认移动方向
@@ -102,54 +201,72 @@
 
     //监听方向键改变蛇移动方向
     document.addEventListener('keydown', function (e) {
-      //按左键
-      if (e.key === 'ArrowLeft') {
-        type = 'left'
-      }
-      //按右键
-      if (event.key === 'ArrowRight') {
-        type = 'right'
-      }
-      //按上键
-      if (event.key === 'ArrowUp') {
-        type = 'up'
-      }
-      //按下键
-      if (event.key === 'ArrowDown') {
-        type = 'down'
+      if (e.key === 'ArrowLeft') type = 'left'
+      if (e.key === 'ArrowRight') type = 'right'
+      if (e.key === 'ArrowUp') type = 'up'
+      if (e.key === 'ArrowDown') type = 'down'
+    })
+    let timer
+    function startTimer() {
+      timer = setInterval(() => {
+        let a, b
+        if (type === 'left') {
+          a = 0, b = -1
+        }
+        else if (type === 'right') {
+          a = 0, b = 1
+        }
+        else if (type === 'up') {
+          a = -1, b = 0
+        }
+        else if (type === 'down') {
+          a = 1, b = 0
+        }
+        snake.unshift([snake[0][0] + a, snake[0][1] + b])
+        snake.pop()
+        console.log('移动之后的蛇头坐标', snake[0][0], snake[0][1]);
+        render()
+        death.innerHTML = `当前长度：${snake.length}`
+        if (hitArea() || repeat()) {
+          deathWarning()
+        }
+        else if (touch()) {
+          snake.unshift([apple[0], apple[1]])
+          apple = []
+          console.log(snake.length);
+        }
+      }, 60)
+    }
+    startTimer()
+    let paused = false
+    btnPause && btnPause.addEventListener('click', () => {
+      if (!paused) {
+        paused = true
+        clearInterval(timer)
+        death.innerHTML = `已暂停 · 当前长度：${snake.length}`
+        btnPause.textContent = '继续'
+      } else {
+        paused = false
+        startTimer()
+        btnPause.textContent = '暂停'
       }
     })
-
-    let timer = setInterval(() => {
-      let a, b
-      if (type === 'left') {
-        a = 0, b = -1
+    btnRestart && btnRestart.addEventListener('click', () => {
+      clearInterval(timer)
+      clearInterval(reward)
+      snake.length = 0
+      for (let i = 0; i < 10; i++) {
+        snake.push([26 - i, 25])
       }
-      else if (type === 'right') {
-        a = 0, b = 1
-      }
-      else if (type === 'up') {
-        a = -1, b = 0
-      }
-      else if (type === 'down') {
-        a = 1, b = 0
-      }
-      snake.unshift([snake[0][0] + a, snake[0][1] + b])//蛇移动
-      snake.pop()//蛇移动
-      console.log('移动之后的蛇头坐标', snake[0][0], snake[0][1]);
+      type = 'down'
+      apple = [Math.floor(Math.random() * 50), Math.floor(Math.random() * 50)]
       render()
-      //这一秒蛇移动完之后判断
-      //撞墙和撞自己 就触发死亡效果
-      if (hitArea() || repeat()) {
-        deathWarning()
-      }
-      //蛇吃果实
-      else if (touch()) {
-        snake.unshift([apple[0], apple[1]])
-        apple = []
-        console.log(snake.length);
-      }
-    }, 10)
+      death.innerHTML = `当前长度：${snake.length}`
+      startReward()
+      startTimer()
+      paused = false
+      if (btnPause) btnPause.textContent = '暂停'
+    })
 
 
     //如果蛇自己撞到自己就会死
@@ -165,7 +282,7 @@
     //如果撞墙就死
     function hitArea() {
       for (let i = 0; i < snake.length; i++) {
-        if (snake[i][0] === 100 || snake[i][1] === 100
+        if (snake[i][0] === 50 || snake[i][1] === 50
           || snake[i][0] === 0 || snake[i][1] === 0) {
           console.log('撞墙死了');
 
@@ -191,6 +308,5 @@
       }
     }
   </script>
-</body>
 
 </html>
